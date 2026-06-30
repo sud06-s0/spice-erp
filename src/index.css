@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme {
+  /* Backgrounds & surfaces — warm parchment, not stark white or dark mode */
+  --color-bg: #faf8f4;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f3efe7;
+  --color-border: #e7e2d6;
+
+  /* Text — peppercorn charcoal, never pure black */
+  --color-ink: #2a2521;
+  --color-ink-muted: #6b6358;
+
+  /* Brand — cardamom green, the primary action/nav color */
+  --color-primary: #1f4d3d;
+  --color-primary-hover: #163a2e;
+  --color-primary-tint: #dce8e0;
+
+  /* Accent — turmeric gold, used for key metrics and highlights only */
+  --color-accent: #c8801a;
+  --color-accent-tint: #f5e6cc;
+
+  /* Status colors, named for what they mean in this business */
+  --color-success: #2f6b4f;
+  --color-success-tint: #dcebe2;
+  --color-warning: #c8801a;
+  --color-warning-tint: #f5e6cc;
+  --color-danger: #a8412f;
+  --color-danger-tint: #f1ddd8;
+
+  /* Type */
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+
+  --radius-stamp: 2px;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Signature element: status tags styled like a document stamp — fitting
+     for a business whose product literally moves on certificates and seals. */
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-stamp);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+}
