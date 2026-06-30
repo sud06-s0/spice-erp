@@ -102,7 +102,7 @@ export default function Procurement() {
       ) : (
         <section className="bg-surface border border-border rounded-lg">
           {poError && <p className="px-5 py-3 text-sm text-danger border-b border-border">{poError}</p>}
-          <PurchaseOrderTable orders={orders} loading={loadingOrders} />
+          <PurchaseOrderTable orders={orders} loading={loadingOrders} onRefresh={loadOrders} />
         </section>
       )}
 
