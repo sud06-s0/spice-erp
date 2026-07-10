@@ -10,6 +10,7 @@ import ProductCostFormModal from '../components/finance/ProductCostFormModal'
 import ProductCostTable from '../components/finance/ProductCostTable'
 import ExpenseFormModal from '../components/finance/ExpenseFormModal'
 import ExpenseTable from '../components/finance/ExpenseTable'
+import RevenueSummary from '../components/finance/RevenueSummary'
 
 export default function Finance() {
   const [tab, setTab] = useState('invoices')
@@ -30,6 +31,9 @@ export default function Finance() {
   const [expenses, setExpenses] = useState([])
   const [loadingExpenses, setLoadingExpenses] = useState(true)
   const [showExpenseModal, setShowExpenseModal] = useState(false)
+
+  const [summary, setSummary] = useState(null)
+  const [loadingSummary, setLoadingSummary] = useState(true)
 
   const [error, setError] = useState('')
 
@@ -80,13 +84,31 @@ export default function Finance() {
     setLoadingExpenses(false)
   }, [])
 
+  const loadSummary = useCallback(async () => {
+    setLoadingSummary(true)
+    try {
+      const data = await apiClient.get('/api/finance/summary')
+      setSummary(data)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoadingSummary(false)
+    }
+  }, [])
+
   useEffect(() => {
     loadInvoices()
     loadProfitability()
     loadFinishedProducts()
     loadCosts()
     loadExpenses()
-  }, [loadInvoices, loadProfitability, loadFinishedProducts, loadCosts, loadExpenses])
+    loadSummary()
+  }, [loadInvoices, loadProfitability, loadFinishedProducts, loadCosts, loadExpenses, loadSummary])
+
+  const refreshAfterPayment = () => {
+    loadInvoices()
+    loadSummary()
+  }
 
   const tabs = [
     ['invoices', 'Invoices'],
@@ -128,6 +150,8 @@ export default function Finance() {
         )}
       </div>
 
+      <RevenueSummary summary={summary} loading={loadingSummary} />
+
       <div className="flex gap-1 border-b border-border">
         {tabs.map(([key, label]) => (
           <button
@@ -153,9 +177,17 @@ export default function Finance() {
         {tab === 'expenses' && <ExpenseTable expenses={expenses} loading={loadingExpenses} />}
       </section>
 
-      {showInvoiceModal && <InvoiceFormModal onClose={() => setShowInvoiceModal(false)} onCreated={loadInvoices} />}
+      {showInvoiceModal && (
+        <InvoiceFormModal
+          onClose={() => setShowInvoiceModal(false)}
+          onCreated={() => {
+            loadInvoices()
+            loadSummary()
+          }}
+        />
+      )}
       {paymentInvoice && (
-        <PaymentModal invoice={paymentInvoice} onClose={() => setPaymentInvoice(null)} onRecorded={loadInvoices} />
+        <PaymentModal invoice={paymentInvoice} onClose={() => setPaymentInvoice(null)} onRecorded={refreshAfterPayment} />
       )}
       {showCostModal && (
         <ProductCostFormModal
